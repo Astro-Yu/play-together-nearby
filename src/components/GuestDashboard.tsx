@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,8 +26,8 @@ const GuestDashboard = () => {
   const [gatherings, setGatherings] = useState<GatheringType[]>([]);
   const [filteredGatherings, setFilteredGatherings] = useState<GatheringType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sportFilter, setSportFilter] = useState('');
-  const [locationFilter, setLocationFilter] = useState('');
+  const [sportFilter, setSportFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('all');
 
   useEffect(() => {
     console.log('GuestDashboard component mounted');
@@ -60,11 +59,11 @@ const GuestDashboard = () => {
       );
     }
     
-    if (sportFilter) {
+    if (sportFilter && sportFilter !== 'all') {
       filtered = filtered.filter(g => g.sport === sportFilter);
     }
     
-    if (locationFilter) {
+    if (locationFilter && locationFilter !== 'all') {
       filtered = filtered.filter(g => g.location.includes(locationFilter));
     }
     
@@ -130,7 +129,7 @@ const GuestDashboard = () => {
                   <SelectValue placeholder="종목 선택" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">전체</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
                   <SelectItem value="농구">농구</SelectItem>
                   <SelectItem value="풋살">풋살</SelectItem>
                   <SelectItem value="배드민턴">배드민턴</SelectItem>
@@ -144,7 +143,7 @@ const GuestDashboard = () => {
                   <SelectValue placeholder="지역 선택" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">전체</SelectItem>
+                  <SelectItem value="all">전체</SelectItem>
                   <SelectItem value="강남구">강남구</SelectItem>
                   <SelectItem value="성동구">성동구</SelectItem>
                   <SelectItem value="마포구">마포구</SelectItem>
