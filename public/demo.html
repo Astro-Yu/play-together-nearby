@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스포츠 게더 - 데모</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 스크롤바 스타일링 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- 전체 컨테이너 -->
+    <div id="app" class="container mx-auto p-4 max-w-4xl">
+
+        <!-- 헤더 -->
+        <header class="text-center my-6 relative">
+            <h1 class="text-4xl font-bold text-indigo-600">스포츠 게더</h1>
+            <p class="text-gray-600 mt-2">스포츠를 사랑하는 모두를 위한 공간</p>
+            <div id="auth-container" class="absolute top-0 right-0 mt-2">
+                <button id="login-btn" class="bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-600 transition">로그인</button>
+                <div id="user-info" class="hidden items-center">
+                    <span id="welcome-msg" class="mr-4 font-semibold"></span>
+                    <button id="logout-btn" class="bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition">로그아웃</button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 로그인 전 안내 메시지 -->
+        <div id="pre-login-view" class="text-center h-[60vh] flex flex-col justify-center items-center fade-in">
+            <h2 class="text-2xl font-semibold mb-4">모임에 참여하거나 만들어보세요!</h2>
+            <p class="text-gray-600 mb-8">먼저 로그인이 필요합니다.</p>
+            <button id="login-prompt-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transition-transform transform hover:scale-105">
+                로그인하고 시작하기
+            </button>
+        </div>
+
+        <!-- 역할 선택 화면 -->
+        <div id="role-selection" class="hidden justify-center items-center h-[60vh] fade-in">
+            <div class="text-center">
+                <h2 class="text-2xl font-semibold mb-8">어떤 목적으로 오셨나요?</h2>
+                <div class="space-y-4 md:space-y-0 md:space-x-8 flex flex-col md:flex-row">
+                    <button id="select-host" class="bg-white text-indigo-600 border-2 border-indigo-600 font-bold py-6 px-12 rounded-lg shadow-lg hover:bg-indigo-600 hover:text-white transition-transform transform hover:scale-105">
+                        <span class="text-2xl">👑</span>
+                        <p class="mt-2 text-xl">호스트로 모집하기</p>
+                        <p class="text-sm mt-1">팀원/게스트를 구해요</p>
+                    </button>
+                    <button id="select-guest" class="bg-white text-teal-600 border-2 border-teal-600 font-bold py-6 px-12 rounded-lg shadow-lg hover:bg-teal-600 hover:text-white transition-transform transform hover:scale-105">
+                        <span class="text-2xl">🏃‍♂️</span>
+                        <p class="mt-2 text-xl">게스트로 참여하기</p>
+                        <p class="text-sm mt-1">운동할 곳을 찾아요</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메인 콘텐츠 (역할 선택 후 표시) -->
+        <main id="main-content" class="hidden fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="main-title" class="text-3xl font-bold"></h2>
+                <button id="change-role-btn" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg transition">역할 변경</button>
+            </div>
+
+            <!-- 게스트 뷰 -->
+            <div id="guest-view" class="hidden">
+                <!-- 필터 바 -->
+                <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                    <h3 class="font-semibold mb-4 text-lg">어떤 운동을 찾으세요?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <select id="filter-sport" class="p-2 border rounded-md w-full">
+                            <option value="">종목 전체</option>
+                            <option>농구</option>
+                            <option>풋살</option>
+                            <option>테니스</option>
+                            <option>배드민턴</option>
+                        </select>
+                        <input type="text" id="filter-location" placeholder="지역 (예: 성동구)" class="p-2 border rounded-md w-full">
+                        <input type="date" id="filter-date" class="p-2 border rounded-md w-full text-gray-500">
+                        <button id="filter-btn" class="col-span-1 md:col-span-2 bg-indigo-500 text-white p-2 rounded-md hover:bg-indigo-600 transition">찾아보기</button>
+                    </div>
+                </div>
+                <!-- 모집 글 리스트 -->
+                <div id="listings-container" class="space-y-4">
+                    <!-- JS로 동적 생성 -->
+                </div>
+            </div>
+
+            <!-- 호스트 뷰 -->
+            <div id="host-view" class="hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 모집 글 작성 -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-4">새로운 모임 만들기</h3>
+                        <form id="create-listing-form" class="space-y-4">
+                            <select name="sport" class="w-full p-2 border rounded-md text-gray-500" required>
+                                <option value="" disabled selected>운동 종목 선택</option>
+                                <option>농구</option>
+                                <option>풋살</option>
+                                <option>테니스</option>
+                                <option>배드민턴</option>
+                            </select>
+                            <select name="level" class="w-full p-2 border rounded-md text-gray-500" required>
+                                <option>실력 무관</option>
+                                <option>초보</option>
+                                <option>중수</option>
+                                <option>고수</option>
+                            </select>
+                            <input type="text" name="location" placeholder="장소 (예: 서울 성동구 OO체육관)" class="w-full p-2 border rounded-md" required>
+                            <input type="datetime-local" name="datetime" class="w-full p-2 border rounded-md text-gray-500" required>
+                            <div class="flex space-x-2">
+                                <input type="number" name="totalSpots" placeholder="총 모집 인원" class="w-1/2 p-2 border rounded-md" required min="1">
+                                <input type="text" name="fee" placeholder="참가비 (예: 1/N)" class="w-1/2 p-2 border rounded-md" required>
+                            </div>
+                            <textarea name="message" placeholder="모집자 메시지" class="w-full p-2 border rounded-md" rows="3"></textarea>
+                            <button type="submit" class="w-full bg-teal-500 text-white p-3 rounded-md font-bold hover:bg-teal-600 transition">모집 글 올리기</button>
+                        </form>
+                    </div>
+                    <!-- 내가 만든 모임 -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-4">내가 만든 모임</h3>
+                        <div id="my-listings-container" class="space-y-4 max-h-96 overflow-y-auto">
+                           <!-- JS로 동적 생성 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 모달 -->
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+        <div id="modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative fade-in">
+            <!-- 모달 내용 JS로 동적 생성 -->
+        </div>
+    </div>
+
+    <script>
+// ... existing code ...
+</script>
+</body>
+</html> 

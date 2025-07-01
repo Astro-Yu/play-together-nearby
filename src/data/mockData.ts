@@ -1,4 +1,3 @@
-
 // Mock data for host gatherings
 export const mockHostGatherings = [
   {
@@ -12,7 +11,11 @@ export const mockHostGatherings = [
     cost: '15,000원 (1/N)',
     description: '즐겁게 농구할 수 있는 분들 환영합니다! 초급자도 환영해요.',
     status: 'recruiting' as const,
-    participants: [],
+    participants: [
+      { id: 1, name: '김철수', status: 'pending' },
+      { id: 2, name: '이영희', status: 'approved' },
+      { id: 3, name: '박민수', status: 'rejected' },
+    ],
     createdAt: '2025-07-01T10:00:00Z',
   },
   {
@@ -28,6 +31,25 @@ export const mockHostGatherings = [
     status: 'full' as const,
     participants: [],
     createdAt: '2025-07-01T09:00:00Z',
+  },
+  {
+    id: 3,
+    sport: '배드민턴',
+    location: '서울 송파구 올림픽공원',
+    date: '2025-07-10',
+    time: '18:30',
+    maxParticipants: 8,
+    currentParticipants: 8,
+    cost: '8,000원 (1/N)',
+    description: '퇴근 후 배드민턴! 중급 이상 환영합니다.',
+    status: 'full' as const,
+    participants: [
+      { id: 11, name: '최지훈', status: 'approved' },
+      { id: 12, name: '김하늘', status: 'approved' },
+      { id: 13, name: '이수빈', status: 'pending' },
+      { id: 14, name: '박서준', status: 'rejected' },
+    ],
+    createdAt: '2025-07-05T15:00:00Z',
   },
 ];
 
@@ -102,5 +124,19 @@ export const mockGuestGatherings = [
     hostName: '월요농구',
     hostRating: 4.5,
     joinStatus: 'none' as const,
+  },
+  {
+    id: 106,
+    sport: '탁구',
+    location: '서울 강남구 역삼탁구장',
+    date: '2025-07-09',
+    time: '20:00',
+    maxParticipants: 6,
+    currentParticipants: 6,
+    cost: '10,000원 (1/N)',
+    description: '퇴근 후 탁구 한 게임! 초보 환영합니다.',
+    hostName: '탁구마스터',
+    hostRating: 4.9,
+    joinStatus: 'confirmed' as const,
   },
 ];
