@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,20 +24,32 @@ interface GatheringType {
 }
 
 const GuestDashboard = () => {
-  const [gatherings, setGatherings] = useState<GatheringType[]>(mockGuestGatherings);
-  const [filteredGatherings, setFilteredGatherings] = useState<GatheringType[]>(mockGuestGatherings);
+  const [gatherings, setGatherings] = useState<GatheringType[]>([]);
+  const [filteredGatherings, setFilteredGatherings] = useState<GatheringType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sportFilter, setSportFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
 
   useEffect(() => {
-    console.log('GuestDashboard mounted');
-    console.log('mockGuestGatherings:', mockGuestGatherings);
-    console.log('gatherings state:', gatherings);
-    console.log('filteredGatherings state:', filteredGatherings);
+    console.log('GuestDashboard component mounted');
+    console.log('mockGuestGatherings from import:', mockGuestGatherings);
+    
+    if (mockGuestGatherings && mockGuestGatherings.length > 0) {
+      console.log('Setting gatherings with mock data');
+      setGatherings(mockGuestGatherings);
+      setFilteredGatherings(mockGuestGatherings);
+    } else {
+      console.error('No mock data available!');
+    }
   }, []);
 
+  useEffect(() => {
+    console.log('Gatherings state updated:', gatherings);
+    console.log('FilteredGatherings state updated:', filteredGatherings);
+  }, [gatherings, filteredGatherings]);
+
   const handleSearch = () => {
+    console.log('Search triggered with filters:', { searchTerm, sportFilter, locationFilter });
     let filtered = gatherings;
     
     if (searchTerm) {
@@ -55,12 +68,13 @@ const GuestDashboard = () => {
       filtered = filtered.filter(g => g.location.includes(locationFilter));
     }
     
+    console.log('Filtered results:', filtered);
     setFilteredGatherings(filtered);
   };
 
   const handleJoinGathering = (id: number) => {
     console.log('Joining gathering with id:', id);
-    setGatherings(gatherings.map(g => 
+    const updatedGatherings = gatherings.map(g => 
       g.id === id 
         ? { 
             ...g, 
@@ -68,8 +82,8 @@ const GuestDashboard = () => {
             joinStatus: 'applied' as const
           } 
         : g
-    ));
-    setFilteredGatherings(filteredGatherings.map(g => 
+    );
+    const updatedFilteredGatherings = filteredGatherings.map(g => 
       g.id === id 
         ? { 
             ...g, 
@@ -77,8 +91,13 @@ const GuestDashboard = () => {
             joinStatus: 'applied' as const
           } 
         : g
-    ));
+    );
+    
+    setGatherings(updatedGatherings);
+    setFilteredGatherings(updatedFilteredGatherings);
   };
+
+  console.log('Rendering GuestDashboard with filteredGatherings length:', filteredGatherings.length);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -146,6 +165,12 @@ const GuestDashboard = () => {
         </CardContent>
       </Card>
 
+      {/* Debug Information */}
+      <div className="mb-4 p-4 bg-yellow-100 rounded-lg">
+        <p className="text-sm">Debug: Gatherings loaded: {gatherings.length}</p>
+        <p className="text-sm">Debug: Filtered gatherings: {filteredGatherings.length}</p>
+      </div>
+
       {/* Gatherings List */}
       <div className="space-y-4">
         {filteredGatherings.length === 0 ? (
@@ -155,10 +180,10 @@ const GuestDashboard = () => {
                 <Search className="w-16 h-16 mx-auto mb-4" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                검색 결과가 없습니다
+                {gatherings.length === 0 ? '데이터를 불러오는 중...' : '검색 결과가 없습니다'}
               </h3>
               <p className="text-gray-600">
-                다른 조건으로 검색해보세요
+                {gatherings.length === 0 ? '잠시만 기다려주세요' : '다른 조건으로 검색해보세요'}
               </p>
             </CardContent>
           </Card>
