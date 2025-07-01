@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,25 +31,13 @@ const GuestDashboard = () => {
   const [locationFilter, setLocationFilter] = useState('all');
 
   useEffect(() => {
-    console.log('GuestDashboard component mounted');
-    console.log('mockGuestGatherings from import:', mockGuestGatherings);
-    
     if (mockGuestGatherings && mockGuestGatherings.length > 0) {
-      console.log('Setting gatherings with mock data');
       setGatherings(mockGuestGatherings);
       setFilteredGatherings(mockGuestGatherings);
-    } else {
-      console.error('No mock data available!');
     }
   }, []);
 
-  useEffect(() => {
-    console.log('Gatherings state updated:', gatherings);
-    console.log('FilteredGatherings state updated:', filteredGatherings);
-  }, [gatherings, filteredGatherings]);
-
   const handleSearch = () => {
-    console.log('Search triggered with filters:', { searchTerm, sportFilter, locationFilter });
     let filtered = gatherings;
     
     if (searchTerm) {
@@ -67,12 +56,10 @@ const GuestDashboard = () => {
       filtered = filtered.filter(g => g.location.includes(locationFilter));
     }
     
-    console.log('Filtered results:', filtered);
     setFilteredGatherings(filtered);
   };
 
   const handleJoinGathering = (id: number) => {
-    console.log('Joining gathering with id:', id);
     const updatedGatherings = gatherings.map(g => 
       g.id === id 
         ? { 
@@ -95,8 +82,6 @@ const GuestDashboard = () => {
     setGatherings(updatedGatherings);
     setFilteredGatherings(updatedFilteredGatherings);
   };
-
-  console.log('Rendering GuestDashboard with filteredGatherings length:', filteredGatherings.length);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -163,12 +148,6 @@ const GuestDashboard = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Debug Information */}
-      <div className="mb-4 p-4 bg-yellow-100 rounded-lg">
-        <p className="text-sm">Debug: Gatherings loaded: {gatherings.length}</p>
-        <p className="text-sm">Debug: Filtered gatherings: {filteredGatherings.length}</p>
-      </div>
 
       {/* Gatherings List */}
       <div className="space-y-4">
