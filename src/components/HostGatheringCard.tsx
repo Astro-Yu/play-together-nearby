@@ -59,7 +59,11 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
 
   const handleStatusChange = () => {
     if (gathering.status === 'recruiting') {
-      onUpdate(gathering.id, { status: 'full' });
+      // 모집 완료로 변경 시 대기중 참여자 거부 처리
+      const updatedParticipants = gathering.participants.map((p: any) =>
+        p.status === 'pending' ? { ...p, status: 'rejected' } : p
+      );
+      onUpdate(gathering.id, { status: 'full', participants: updatedParticipants });
     } else if (gathering.status === 'full') {
       onUpdate(gathering.id, { status: 'completed' });
     }
@@ -262,7 +266,7 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
               완료된 모집
             </Button>
           )}
-          <Button variant="outline" className="px-6" onClick={() => setOpen(true)}>
+          <Button variant="outline" className="px-6" onClick={() => setOpen(true)} disabled={gathering.status !== 'recruiting'}>
             참여자 관리
           </Button>
         </div>
