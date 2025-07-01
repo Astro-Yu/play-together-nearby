@@ -1,73 +1,76 @@
-# Welcome to your Lovable project
+# App Title
+스포츠 게더 – 스포츠 게스트/호스트 모집 플랫폼
 
-## Project info
+# Concept
+운동하고 싶은 사람과 운동할 사람을 찾는 사람을 빠르게 연결하는 스포츠 매칭 플랫폼.  
+게스트와 호스트 역할을 나누고, 위치 기반 필터링과 시간, 종목 기반 매칭 기능을 제공.
 
-**URL**: https://lovable.dev/projects/8ef81099-1b3a-4772-b513-0dbd436e5e68
+# Target Users
+- 운동 인원이 부족한 사람들 (ex. 농구 팀, 풋살 팀, 러닝크루 등)
+- 동네에서 스포츠 모임에 참여하고 싶은 사람들
 
-## How can I edit this code?
+# User Personas
+## 호스트
+- 이름: 유석현 / 나이: 28세
+- 목표: 빠르게 농구 인원 모집
+- Pain Point: 매번 인원이 부족하고 참여 여부가 불확실함
+- Needs: 빠른 인원 모집, 확정된 인원 수 확보
 
-There are several ways of editing your application.
+## 게스트
+- 이름: 유석현 / 나이: 28세
+- 목표: 근처에서 팀 스포츠 참여
+- Pain Point: 지속 가능한 모임이나 정보 부족
+- Needs: 신뢰할 수 있는 모임 찾기, 위치 기반 필터링
 
-**Use Lovable**
+# Features
+- [ ] 호스트 / 게스트 역할 선택
+- [ ] 운동 종목, 위치, 날짜, 시간, 금액, 모집 인원 입력
+- [ ] 위치 기반 필터를 통한 참여자 모집 글 탐색
+- [ ] 참여 신청 및 확정 기능
+- [ ] 평점 남기기 기능 (호스트/게스트 상호평가)
+- [ ] 모집 완료 시 알림 / 상태 변경
+- [ ] Mock 데이터를 기반으로 구현
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8ef81099-1b3a-4772-b513-0dbd436e5e68) and start prompting.
+# User Flows
+## 호스트
+1. 앱 접속 후 '호스트' 역할 선택
+2. 모집 글 작성 (종목, 위치, 날짜, 시간, 금액, 인원 등)
+3. 게스트 신청을 받고 확정 버튼 클릭
+4. 모임 완료 후 평가
 
-Changes made via Lovable will be committed automatically to this repo.
+## 게스트
+1. 앱 접속 후 '게스트' 역할 선택
+2. 필터로 원하는 모임 탐색
+3. 모집 글에 참여 신청
+4. 일정 확정되면 운동 참여
+5. 모임 후 호스트 평가
 
-**Use your preferred IDE**
+# Mock Data Examples
+## 모집 글 예시
+- 종목: 농구
+- 위치: 서울 성동구 OO 체육관
+- 시간: 2025년 7월 6일 (토) 15:00
+- 금액: 1/N (코트비)
+- 모집 인원: 총 10명 / 현재 7명 모집 완료
+- 모집자 메세지: “즐겁게 게임할 수 있는 분 환영해요!”
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 참여자 프로필
+- 닉네임: 농구매니아
+- 레벨: 중상급
+- 최근 평점: ★★★★★ (5.0)
+- 최근 참여 횟수: 5회
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Mock Behavior (AI 없이 동작)
+- 특정 조건의 필터 → 미리 정의된 모집 리스트 반환
+- 참여 신청 클릭 → “참여 신청 완료” 상태로 UI 변경
+- 평가 작성 → 간단한 별점 선택 후 완료 메세지 표시
 
-Follow these steps:
+# UI Components (선택)
+- 역할 선택 화면 (호스트 / 게스트)
+- 모집 작성/참여 카드
+- 필터바 (종목, 위치, 날짜, 시간, 금액)
+- 참여자 리스트 및 평점 화면
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/8ef81099-1b3a-4772-b513-0dbd436e5e68) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Success Criteria
+- 사용자가 역할 선택 → 정보 입력 or 탐색 → 참여 완료 → 평가 흐름이 자연스럽게 동작할 것
+- 사용자가 본인이 원하는 정보 (모집 or 참여)로 접근 가능한 UX 제공
