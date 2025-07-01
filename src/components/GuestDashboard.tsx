@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +29,13 @@ const GuestDashboard = () => {
   const [sportFilter, setSportFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
 
+  useEffect(() => {
+    console.log('GuestDashboard mounted');
+    console.log('mockGuestGatherings:', mockGuestGatherings);
+    console.log('gatherings state:', gatherings);
+    console.log('filteredGatherings state:', filteredGatherings);
+  }, []);
+
   const handleSearch = () => {
     let filtered = gatherings;
     
@@ -52,6 +59,7 @@ const GuestDashboard = () => {
   };
 
   const handleJoinGathering = (id: number) => {
+    console.log('Joining gathering with id:', id);
     setGatherings(gatherings.map(g => 
       g.id === id 
         ? { 
