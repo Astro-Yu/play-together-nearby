@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +19,7 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
     maxParticipants: '',
     cost: '',
     description: '',
+    level: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -103,6 +103,21 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
             value={formData.cost}
             onChange={(e) => handleInputChange('cost', e.target.value)}
           />
+        </div>
+
+        <div>
+          <Label htmlFor="level">모임 수준 *</Label>
+          <Select value={formData.level} onValueChange={(value) => handleInputChange('level', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="모임 수준을 선택하세요" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="실력 무관">실력 무관</SelectItem>
+              <SelectItem value="초보 환영">초보 환영</SelectItem>
+              <SelectItem value="중수">중수</SelectItem>
+              <SelectItem value="고수">고수</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

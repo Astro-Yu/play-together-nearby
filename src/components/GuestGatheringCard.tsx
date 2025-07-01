@@ -16,6 +16,7 @@ interface Gathering {
   hostName: string;
   hostRating: number;
   joinStatus?: 'none' | 'applied' | 'confirmed';
+  level?: string;
 }
 
 interface GuestGatheringCardProps {
@@ -72,6 +73,25 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              {gathering.level && (
+                <Badge
+                  className={
+                    gathering.level === '실력 무관'
+                      ? 'bg-black text-white'
+                      : gathering.level === '초보 환영'
+                      ? 'bg-green-100 text-green-700'
+                      : gathering.level === '중수'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : gathering.level === '고수'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-blue-100 text-blue-700'
+                  }
+                >
+                  {gathering.level}
+                </Badge>
+              )}
+            </div>
             <CardTitle className="text-xl text-gray-900 mb-2">
               {gathering.sport} 참여자 모집
             </CardTitle>
