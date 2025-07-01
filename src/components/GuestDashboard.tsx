@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +7,24 @@ import { Search, Filter } from 'lucide-react';
 import GuestGatheringCard from '@/components/GuestGatheringCard';
 import { mockGuestGatherings } from '@/data/mockData';
 
+interface GatheringType {
+  id: number;
+  sport: string;
+  location: string;
+  date: string;
+  time: string;
+  maxParticipants: number;
+  currentParticipants: number;
+  cost: string;
+  description: string;
+  hostName: string;
+  hostRating: number;
+  joinStatus: 'none' | 'applied' | 'confirmed';
+}
+
 const GuestDashboard = () => {
-  const [gatherings, setGatherings] = useState(mockGuestGatherings);
-  const [filteredGatherings, setFilteredGatherings] = useState(mockGuestGatherings);
+  const [gatherings, setGatherings] = useState<GatheringType[]>(mockGuestGatherings);
+  const [filteredGatherings, setFilteredGatherings] = useState<GatheringType[]>(mockGuestGatherings);
   const [searchTerm, setSearchTerm] = useState('');
   const [sportFilter, setSportFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');

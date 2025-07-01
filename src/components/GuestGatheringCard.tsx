@@ -1,8 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Users, Clock, Won, MessageSquare, Star } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, DollarSign, MessageSquare, Star } from 'lucide-react';
 
 interface Gathering {
   id: number;
@@ -113,7 +112,7 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
           
           {gathering.cost && (
             <div className="flex items-center text-gray-600">
-              <Won className="w-4 h-4 mr-1" />
+              <DollarSign className="w-4 h-4 mr-1" />
               <span className="text-sm">{gathering.cost}</span>
             </div>
           )}
