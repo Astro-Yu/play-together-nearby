@@ -11,14 +11,19 @@ interface Gathering {
   sport: string;
   location: string;
   date: string;
-  time: string;
-  maxParticipants: number;
+  startTime: string;
+  endTime: string;
+  guardCount: number;
+  forwardCount: number;
+  centerCount: number;
+  gender: string;
   currentParticipants: number;
   cost: string;
   description: string;
   status: 'recruiting' | 'full' | 'completed';
   participants: any[];
   guestRatings?: { [key: number]: number };
+  guestTags?: { [key: number]: string };
   level?: string;
 }
 
@@ -27,11 +32,16 @@ interface HostGatheringCardProps {
   onUpdate: (id: number, updates: any) => void;
 }
 
+const TAG_OPTIONS = [
+  '#친절', '#매너 좋음', '#고수', '#과격함', '#소통', '#시간 엄수', '#무단 결석', '#추천하고 싶음', '#또 하고 싶음'
+];
+
 const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
   const [open, setOpen] = useState(false);
   const [rateOpen, setRateOpen] = useState(false);
   const [ratings, setRatings] = useState<{ [key: number]: number }>({});
   const [rated, setRated] = useState(false);
+  const [guestTags, setGuestTags] = useState<{ [key: number]: string }>({});
 
   // 평가 완료 시 모든 게스트 평가 여부 확인
   useEffect(() => {
@@ -92,9 +102,13 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
     setRatings(prev => ({ ...prev, [id]: value }));
   };
 
+  const handleGuestTagSelect = (participantId: number, tag: string) => {
+    setGuestTags(prev => ({ ...prev, [participantId]: tag }));
+  };
+
   // 평가 완료 버튼 클릭 시 모집글 상태를 completed로 변경
   const handleRateComplete = () => {
-    onUpdate(gathering.id, { status: 'completed', guestRatings: ratings });
+    onUpdate(gathering.id, { status: 'completed', guestRatings: ratings, guestTags });
     setRateOpen(false);
   };
 
@@ -121,6 +135,19 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
                   {gathering.level}
                 </Badge>
               )}
+              {gathering.gender && (
+                <Badge
+                  className={
+                    gathering.gender === '남'
+                      ? 'bg-blue-100 text-blue-700'
+                      : gathering.gender === '여'
+                      ? 'bg-pink-100 text-pink-700'
+                      : 'bg-gray-200 text-gray-700'
+                  }
+                >
+                  {gathering.gender === '무관' ? '성별 무관' : gathering.gender}
+                </Badge>
+              )}
             </div>
             <CardTitle className="text-xl text-gray-900 mb-2">
               농구 모집
@@ -132,7 +159,7 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
               </div>
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-1" />
-                {gathering.time}
+                {gathering.startTime} ~ {gathering.endTime}
               </div>
             </div>
           </div>
@@ -147,11 +174,10 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
         </div>
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center text-gray-600">
-            <Users className="w-4 h-4 mr-2" />
-            <span className="text-sm">
-              {gathering.currentParticipants}/{gathering.maxParticipants}명
-            </span>
+          <div className="flex items-center text-gray-600 gap-4">
+            <span className="text-sm">가드: {gathering.guardCount}명</span>
+            <span className="text-sm">포워드: {gathering.forwardCount}명</span>
+            <span className="text-sm">센터: {gathering.centerCount}명</span>
           </div>
           
           {gathering.cost && (
@@ -211,23 +237,38 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
             {gathering.participants && gathering.participants.filter((p: any) => p.status === 'approved').length > 0 ? (
               <div className="space-y-4">
                 {gathering.participants.filter((p: any) => p.status === 'approved').map((p: any) => (
-                  <div key={p.id} className="flex items-center gap-3">
-                    <span className="text-gray-800 font-medium w-20">{p.name}</span>
-                    {[1,2,3,4,5].map(i => (
-                      <Star
-                        key={i}
-                        className={`w-7 h-7 cursor-pointer ${i <= (ratings[p.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
-                        fill={i <= (ratings[p.id] || 0) ? '#facc15' : 'none'}
-                        onClick={() => handleStarClick(p.id, i)}
-                        data-testid={`star-${p.id}-${i}`}
-                      />
-                    ))}
-                    <span className="ml-2 text-sm text-gray-500">{ratings[p.id] || 0}점</span>
+                  <div key={p.id} className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="text-gray-800 font-medium w-20">{p.name}</span>
+                      {[0,1,2,3,4,5].map(i => (
+                        <Star
+                          key={i}
+                          className={`w-7 h-7 cursor-pointer ${i <= (ratings[p.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                          fill={i <= (ratings[p.id] || 0) ? '#facc15' : 'none'}
+                          onClick={() => handleStarClick(p.id, i)}
+                          data-testid={`star-${p.id}-${i}`}
+                        />
+                      ))}
+                      <span className="ml-2 text-sm text-gray-500">{ratings[p.id] ?? 0}점</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-700 font-medium">태그:</span>
+                      <select
+                        className="border rounded px-2 py-1 text-sm"
+                        value={guestTags[p.id] || ''}
+                        onChange={e => handleGuestTagSelect(p.id, e.target.value)}
+                      >
+                        <option value="">태그 선택</option>
+                        {TAG_OPTIONS.map(tag => (
+                          <option key={tag} value={tag}>{tag}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 ))}
                 <Button
                   className="w-full bg-gradient-to-r from-orange-500 to-blue-500 text-white font-semibold py-2 mt-4"
-                  disabled={!rated}
+                  disabled={!gathering.participants.filter((p: any) => p.status === 'approved').every(p => ratings[p.id] !== undefined && guestTags[p.id])}
                   onClick={handleRateComplete}
                 >
                   평가 완료
@@ -239,7 +280,7 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
           </DialogContent>
         </Dialog>
 
-        {/* 운동 완료 상태에서 별점만 보기 */}
+        {/* 운동 완료 상태에서 별점/태그만 보기 */}
         {gathering.status === 'completed' && gathering.guestRatings && (
           <div className="pt-2">
             <div className="font-semibold mb-2 text-gray-800">게스트 평점 결과</div>
@@ -247,50 +288,52 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
               {gathering.participants.filter((p: any) => p.status === 'approved').map((p: any) => (
                 <div key={p.id} className="flex items-center gap-2">
                   <span className="text-gray-700 w-20">{p.name}</span>
-                  {[1,2,3,4,5].map(i => (
+                  {[0,1,2,3,4,5].map(i => (
                     <Star
                       key={i}
                       className={`w-5 h-5 ${i <= (gathering.guestRatings?.[p.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
                       fill={i <= (gathering.guestRatings?.[p.id] || 0) ? '#facc15' : 'none'}
                     />
                   ))}
-                  <span className="ml-2 text-sm text-gray-500">{gathering.guestRatings?.[p.id] || 0}점</span>
+                  <span className="ml-2 text-sm text-gray-500">{gathering.guestRatings?.[p.id] ?? 0}점</span>
+                  {gathering.guestTags && gathering.guestTags[p.id] && (
+                    <span className="ml-2 text-xs bg-gray-100 rounded px-2 py-1">{gathering.guestTags[p.id]}</span>
+                  )}
                 </div>
               ))}
             </div>
           </div>
         )}
-
-        <div className="flex gap-2 pt-4">
-          {gathering.status === 'recruiting' && (
-            <Button 
-              onClick={handleStatusChange}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-            >
-              모집 완료로 변경
-            </Button>
-          )}
-          {gathering.status === 'full' && (
-            <Button 
-              onClick={() => setRateOpen(true)}
-              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-            >
-              운동 완료
-            </Button>
-          )}
-          {gathering.status === 'completed' && (
-            <Button 
-              disabled
-              className="flex-1 bg-gray-100 text-gray-500"
-            >
-              완료된 모집
-            </Button>
-          )}
-          <Button variant="outline" className="px-6" onClick={() => setOpen(true)} disabled={gathering.status !== 'recruiting'}>
-            참여자 관리
-          </Button>
-        </div>
       </CardContent>
+      <div className="flex gap-2 pt-4 px-6 pb-6">
+        {gathering.status === 'recruiting' && (
+          <Button 
+            onClick={handleStatusChange}
+            className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+          >
+            모집 완료로 변경
+          </Button>
+        )}
+        {gathering.status === 'full' && (
+          <Button 
+            onClick={() => setRateOpen(true)}
+            className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+          >
+            운동 완료
+          </Button>
+        )}
+        {gathering.status === 'completed' && (
+          <Button 
+            disabled
+            className="flex-1 bg-gray-100 text-gray-500"
+          >
+            완료된 모집
+          </Button>
+        )}
+        <Button variant="outline" className="px-6" onClick={() => setOpen(true)} disabled={gathering.status !== 'recruiting'}>
+          참여자 관리
+        </Button>
+      </div>
     </Card>
   );
 };

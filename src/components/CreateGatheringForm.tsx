@@ -15,8 +15,12 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
     sport: '',
     location: '',
     date: '',
-    time: '',
-    maxParticipants: '',
+    startTime: '',
+    endTime: '',
+    guardCount: '',
+    forwardCount: '',
+    centerCount: '',
+    gender: '',
     cost: '',
     description: '',
     level: '',
@@ -24,7 +28,14 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.sport && formData.location && formData.date && formData.time && formData.maxParticipants) {
+    if (
+      formData.sport &&
+      formData.location &&
+      formData.date &&
+      formData.startTime &&
+      formData.endTime &&
+      (formData.guardCount || formData.forwardCount || formData.centerCount)
+    ) {
       onSubmit(formData);
     }
   };
@@ -59,26 +70,73 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
         </div>
 
         <div>
-          <Label htmlFor="time">시간 *</Label>
+          <Label htmlFor="startTime">시작 시간 *</Label>
           <Input
-            id="time"
+            id="startTime"
             type="time"
-            value={formData.time}
-            onChange={(e) => handleInputChange('time', e.target.value)}
+            value={formData.startTime}
+            onChange={(e) => handleInputChange('startTime', e.target.value)}
           />
         </div>
 
         <div>
-          <Label htmlFor="maxParticipants">모집 인원 *</Label>
+          <Label htmlFor="endTime">종료 시간 *</Label>
           <Input
-            id="maxParticipants"
-            type="number"
-            placeholder="최대 인원 수"
-            min="2"
-            max="20"
-            value={formData.maxParticipants}
-            onChange={(e) => handleInputChange('maxParticipants', e.target.value)}
+            id="endTime"
+            type="time"
+            value={formData.endTime}
+            onChange={(e) => handleInputChange('endTime', e.target.value)}
           />
+        </div>
+
+        <div>
+          <Label htmlFor="guardCount">가드 모집 인원</Label>
+          <Input
+            id="guardCount"
+            type="number"
+            placeholder="가드 인원 수"
+            min="0"
+            max="10"
+            value={formData.guardCount}
+            onChange={(e) => handleInputChange('guardCount', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="forwardCount">포워드 모집 인원</Label>
+          <Input
+            id="forwardCount"
+            type="number"
+            placeholder="포워드 인원 수"
+            min="0"
+            max="10"
+            value={formData.forwardCount}
+            onChange={(e) => handleInputChange('forwardCount', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="centerCount">센터 모집 인원</Label>
+          <Input
+            id="centerCount"
+            type="number"
+            placeholder="센터 인원 수"
+            min="0"
+            max="10"
+            value={formData.centerCount}
+            onChange={(e) => handleInputChange('centerCount', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="gender">모집 성별</Label>
+          <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="성별 선택" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="무관">무관</SelectItem>
+              <SelectItem value="남">남</SelectItem>
+              <SelectItem value="여">여</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>

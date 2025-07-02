@@ -63,7 +63,7 @@ const Index = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <Users className="w-5 h-5 text-white" />
               </div>
-              <h1 class="text-xl font-bold text-gray-900">농구 게더</h1>
+              <h1 className="text-xl font-bold text-gray-900">농구 게더</h1>
             </div>
             {userRole && (
               <Button
@@ -76,31 +76,31 @@ const Index = () => {
               </Button>
             )}
             {userName && (
-              <span class="ml-4 text-gray-700 font-medium">{userName}님</span>
+              <span className="ml-4 text-gray-700 font-medium">{userName}님</span>
             )}
           </div>
         </div>
       </header>
       {/* Main Content */}
-      <main class="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8">
         {!userName ? null :
           (!userRole ? (
             <>
               {/* Hero Section */}
-              <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
                   함께 농구할 사람을 찾아보세요
                 </h2>
-                <p class="text-xl text-gray-600 mb-8">
+                <p className="text-xl text-gray-600 mb-8">
                   호스트가 되어 인원을 모집하거나, 게스트로 참여하세요
                 </p>
               </div>
               {/* Features */}
-              <div class="grid md:grid-cols-3 gap-6 mb-12">
-                <Card class="text-center p-6 hover:shadow-lg transition-shadow">
+              <div className="grid md:grid-cols-3 gap-6 mb-12">
+                <Card className="text-center p-6">
                   <CardHeader>
-                    <MapPin class="w-12 h-12 text-orange-500 mx-auto mb-4" />
-                    <CardTitle class="text-lg">위치 기반 매칭</CardTitle>
+                    <MapPin className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+                    <CardTitle className="text-lg">위치 기반 매칭</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
@@ -108,10 +108,10 @@ const Index = () => {
                     </CardDescription>
                   </CardContent>
                 </Card>
-                <Card class="text-center p-6 hover:shadow-lg transition-shadow">
+                <Card className="text-center p-6">
                   <CardHeader>
-                    <Calendar class="w-12 h-12 text-blue-500 mx-auto mb-4" />
-                    <CardTitle class="text-lg">실시간 모집</CardTitle>
+                    <Calendar className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+                    <CardTitle className="text-lg">실시간 모집</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
@@ -119,7 +119,7 @@ const Index = () => {
                     </CardDescription>
                   </CardContent>
                 </Card>
-                <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+                <Card className="text-center p-6">
                   <CardHeader>
                     <Star className="w-12 h-12 text-green-500 mx-auto mb-4" />
                     <CardTitle className="text-lg">신뢰 평점 시스템</CardTitle>

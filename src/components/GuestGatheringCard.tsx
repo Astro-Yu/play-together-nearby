@@ -8,8 +8,12 @@ interface Gathering {
   sport: string;
   location: string;
   date: string;
-  time: string;
-  maxParticipants: number;
+  startTime: string;
+  endTime: string;
+  guardCount: number;
+  forwardCount: number;
+  centerCount: number;
+  gender: string;
   currentParticipants: number;
   cost: string;
   description: string;
@@ -40,7 +44,8 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
         </Button>
       );
     }
-    if (gathering.currentParticipants >= gathering.maxParticipants) {
+    const isFull = gathering.currentParticipants >= (gathering.guardCount + gathering.forwardCount + gathering.centerCount);
+    if (isFull) {
       return (
         <Button disabled className="flex-1 bg-gray-100 text-gray-500">
           모집 완료
@@ -66,7 +71,7 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
     });
   };
 
-  const isFull = gathering.currentParticipants >= gathering.maxParticipants;
+  const isFull = gathering.currentParticipants >= (gathering.guardCount + gathering.forwardCount + gathering.centerCount);
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -91,6 +96,19 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
                   {gathering.level}
                 </Badge>
               )}
+              {gathering.gender && (
+                <Badge
+                  className={
+                    gathering.gender === '남'
+                      ? 'bg-blue-100 text-blue-700'
+                      : gathering.gender === '여'
+                      ? 'bg-pink-100 text-pink-700'
+                      : 'bg-gray-200 text-gray-700'
+                  }
+                >
+                  {gathering.gender === '무관' ? '성별 무관' : gathering.gender}
+                </Badge>
+              )}
             </div>
             <CardTitle className="text-xl text-gray-900 mb-2">
               {gathering.sport} 참여자 모집
@@ -102,7 +120,7 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
               </div>
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-1" />
-                {gathering.time}
+                {gathering.startTime} ~ {gathering.endTime}
               </div>
             </div>
           </div>
@@ -123,13 +141,11 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
         </div>
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center text-gray-600">
-            <Users className="w-4 h-4 mr-2" />
-            <span className="text-sm">
-              {gathering.currentParticipants}/{gathering.maxParticipants}명
-            </span>
+          <div className="flex items-center text-gray-600 gap-4">
+            <span className="text-sm">가드: {gathering.guardCount}명</span>
+            <span className="text-sm">포워드: {gathering.forwardCount}명</span>
+            <span className="text-sm">센터: {gathering.centerCount}명</span>
           </div>
-          
           {gathering.cost && (
             <div className="flex items-center text-gray-600">
               <DollarSign className="w-4 h-4 mr-1" />
