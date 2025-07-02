@@ -240,11 +240,20 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
                   <div key={p.id} className="flex flex-col gap-2">
                     <div className="flex items-center gap-3">
                       <span className="text-gray-800 font-medium w-20">{p.name}</span>
-                      {[0,1,2,3,4,5].map(i => (
+                      <Star
+                        key={0}
+                        className="w-7 h-7 cursor-pointer text-gray-300"
+                        fill="none"
+                        stroke="#facc15"
+                        onClick={() => handleStarClick(p.id, 0)}
+                        data-testid={`star-${p.id}-0`}
+                      />
+                      {[1,2,3,4,5].map(i => (
                         <Star
                           key={i}
-                          className={`w-7 h-7 cursor-pointer ${i <= (ratings[p.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                          className={`w-7 h-7 cursor-pointer ${(i <= (ratings[p.id] || 0)) ? 'text-yellow-400' : 'text-gray-300'}`}
                           fill={i <= (ratings[p.id] || 0) ? '#facc15' : 'none'}
+                          stroke={'#facc15'}
                           onClick={() => handleStarClick(p.id, i)}
                           data-testid={`star-${p.id}-${i}`}
                         />
@@ -288,11 +297,18 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
               {gathering.participants.filter((p: any) => p.status === 'approved').map((p: any) => (
                 <div key={p.id} className="flex items-center gap-2">
                   <span className="text-gray-700 w-20">{p.name}</span>
-                  {[0,1,2,3,4,5].map(i => (
+                  <Star
+                    key={0}
+                    className="w-5 h-5 text-gray-300"
+                    fill="none"
+                    stroke="#facc15"
+                  />
+                  {[1,2,3,4,5].map(i => (
                     <Star
                       key={i}
-                      className={`w-5 h-5 ${i <= (gathering.guestRatings?.[p.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                      className={`w-5 h-5 ${(i <= (gathering.guestRatings?.[p.id] || 0)) ? 'text-yellow-400' : 'text-gray-300'}`}
                       fill={i <= (gathering.guestRatings?.[p.id] || 0) ? '#facc15' : 'none'}
+                      stroke={'#facc15'}
                     />
                   ))}
                   <span className="ml-2 text-sm text-gray-500">{gathering.guestRatings?.[p.id] ?? 0}점</span>

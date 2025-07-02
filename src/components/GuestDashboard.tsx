@@ -478,11 +478,19 @@ const GuestDashboard = () => {
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
                           <span className="text-gray-700 font-medium">호스트 별점 남기기:</span>
-                          {[0,1,2,3,4,5].map(i => (
+                          <Star
+                            key={0}
+                            className="w-7 h-7 cursor-pointer text-gray-300"
+                            fill="none"
+                            stroke="#facc15"
+                            onClick={() => handleHostStarClick(gathering.id, 0)}
+                          />
+                          {[1,2,3,4,5].map(i => (
                             <Star
                               key={i}
-                              className={`w-7 h-7 cursor-pointer ${i <= (hostRatings[gathering.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                              className={`w-7 h-7 cursor-pointer ${(i <= (hostRatings[gathering.id] || 0)) ? 'text-yellow-400' : 'text-gray-300'}`}
                               fill={i <= (hostRatings[gathering.id] || 0) ? '#facc15' : 'none'}
+                              stroke={'#facc15'}
                               onClick={() => handleHostStarClick(gathering.id, i)}
                             />
                           ))}
@@ -512,11 +520,18 @@ const GuestDashboard = () => {
                     ) : (
                       <div className="flex items-center gap-2">
                         <span className="text-gray-700 font-medium">내가 남긴 호스트 평점:</span>
+                        <Star
+                          key={0}
+                          className="w-7 h-7 text-gray-300"
+                          fill="none"
+                          stroke="#facc15"
+                        />
                         {[1,2,3,4,5].map(i => (
                           <Star
                             key={i}
-                            className={`w-7 h-7 ${i <= (gathering.hostRatingGiven || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                            className={`w-7 h-7 ${(i <= (gathering.hostRatingGiven || 0)) ? 'text-yellow-400' : 'text-gray-300'}`}
                             fill={i <= (gathering.hostRatingGiven || 0) ? '#facc15' : 'none'}
+                            stroke={'#facc15'}
                           />
                         ))}
                         <span className="ml-2 text-sm text-gray-500">{gathering.hostRatingGiven ?? 0}점</span>
