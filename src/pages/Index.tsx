@@ -63,7 +63,7 @@ const Index = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <Users className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">스포츠 게더</h1>
+              <h1 class="text-xl font-bold text-gray-900">농구 게더</h1>
             </div>
             {userRole && (
               <Button
@@ -76,46 +76,46 @@ const Index = () => {
               </Button>
             )}
             {userName && (
-              <span className="ml-4 text-gray-700 font-medium">{userName}님</span>
+              <span class="ml-4 text-gray-700 font-medium">{userName}님</span>
             )}
           </div>
         </div>
       </header>
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main class="max-w-6xl mx-auto px-4 py-8">
         {!userName ? null :
           (!userRole ? (
             <>
               {/* Hero Section */}
-              <div className="text-center mb-12">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                  함께 운동할 사람을 찾아보세요
+              <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                  함께 농구할 사람을 찾아보세요
                 </h2>
-                <p className="text-xl text-gray-600 mb-8">
+                <p class="text-xl text-gray-600 mb-8">
                   호스트가 되어 인원을 모집하거나, 게스트로 참여하세요
                 </p>
               </div>
               {/* Features */}
-              <div className="grid md:grid-cols-3 gap-6 mb-12">
-                <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+              <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <Card class="text-center p-6 hover:shadow-lg transition-shadow">
                   <CardHeader>
-                    <MapPin className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-                    <CardTitle className="text-lg">위치 기반 매칭</CardTitle>
+                    <MapPin class="w-12 h-12 text-orange-500 mx-auto mb-4" />
+                    <CardTitle class="text-lg">위치 기반 매칭</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
-                      내 주변에서 진행되는 스포츠 모임을 쉽게 찾아보세요
+                      내 주변에서 진행되는 농구 모임을 쉽게 찾아보세요
                     </CardDescription>
                   </CardContent>
                 </Card>
-                <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+                <Card class="text-center p-6 hover:shadow-lg transition-shadow">
                   <CardHeader>
-                    <Calendar className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-                    <CardTitle className="text-lg">실시간 모집</CardTitle>
+                    <Calendar class="w-12 h-12 text-blue-500 mx-auto mb-4" />
+                    <CardTitle class="text-lg">실시간 모집</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <CardDescription>
-                      원하는 시간대의 스포츠 모임에 즉시 참여할 수 있어요
+                      원하는 시간대의 농구 모임에 즉시 참여할 수 있어요
                     </CardDescription>
                   </CardContent>
                 </Card>

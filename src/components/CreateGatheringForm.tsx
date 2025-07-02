@@ -36,21 +36,7 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="sport">종목 *</Label>
-          <Select value={formData.sport} onValueChange={(value) => handleInputChange('sport', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="종목을 선택하세요" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="농구">농구</SelectItem>
-              <SelectItem value="풋살">풋살</SelectItem>
-              <SelectItem value="배드민턴">배드민턴</SelectItem>
-              <SelectItem value="테니스">테니스</SelectItem>
-              <SelectItem value="탁구">탁구</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <input type="hidden" name="sport" value="농구" />
 
         <div>
           <Label htmlFor="location">장소 *</Label>

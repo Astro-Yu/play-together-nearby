@@ -73,7 +73,7 @@ const HostDashboard = () => {
                 첫 모집 글을 작성해보세요
               </h3>
               <p className="text-gray-600 mb-6">
-                함께 운동할 사람들을 모집해보세요
+                함께 농구할 사람들을 모집해보세요
               </p>
               <Button
                 onClick={() => setShowCreateForm(true)}

@@ -123,7 +123,7 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
               )}
             </div>
             <CardTitle className="text-xl text-gray-900 mb-2">
-              {gathering.sport} 모집
+              농구 모집
             </CardTitle>
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <div className="flex items-center">

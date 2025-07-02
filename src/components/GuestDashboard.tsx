@@ -30,7 +30,6 @@ const GuestDashboard = () => {
   const [gatherings, setGatherings] = useState<GatheringType[]>([]);
   const [filteredGatherings, setFilteredGatherings] = useState<GatheringType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sportFilter, setSportFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [ratings, setRatings] = useState<{ [key: number]: number }>({});
   const [hostRatings, setHostRatings] = useState<{ [key: number]: number }>({});
@@ -48,14 +47,9 @@ const GuestDashboard = () => {
     
     if (searchTerm) {
       filtered = filtered.filter(g => 
-        g.sport.includes(searchTerm) || 
         g.location.includes(searchTerm) ||
         g.description.includes(searchTerm)
       );
-    }
-    
-    if (sportFilter && sportFilter !== 'all') {
-      filtered = filtered.filter(g => g.sport === sportFilter);
     }
     
     if (locationFilter && locationFilter !== 'all') {
@@ -116,7 +110,7 @@ const GuestDashboard = () => {
         <TabsContent value="search">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">모임 찾기</h2>
-            <p className="text-gray-600">원하는 스포츠 모임을 찾아 참여해보세요</p>
+            <p className="text-gray-600">원하는 농구 모임을 찾아 참여해보세요</p>
           </div>
 
           {/* Search and Filter */}
@@ -136,20 +130,6 @@ const GuestDashboard = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full"
                   />
-                </div>
-                <div>
-                  <Select value={sportFilter} onValueChange={setSportFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="종목 선택" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
-                      <SelectItem value="농구">농구</SelectItem>
-                      <SelectItem value="풋살">풋살</SelectItem>
-                      <SelectItem value="배드민턴">배드민턴</SelectItem>
-                      <SelectItem value="테니스">테니스</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
                 <div>
                   <Select value={locationFilter} onValueChange={setLocationFilter}>
