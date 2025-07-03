@@ -5,6 +5,7 @@ import { Calendar, MapPin, Users, Clock, DollarSign, MessageSquare, Star } from 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState, useEffect } from 'react';
 import { Slider } from '@/components/ui/slider';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 
 interface Gathering {
   id: number;
@@ -21,10 +22,11 @@ interface Gathering {
   cost: string;
   description: string;
   status: 'recruiting' | 'full' | 'completed';
-  participants: any[];
+  participants: { id: number; name: string; status: 'pending' | 'approved' | 'rejected'; position: string; rating: number }[];
   guestRatings?: { [key: number]: number };
   guestTags?: { [key: number]: string };
   level?: string;
+  courtType?: string;
 }
 
 interface HostGatheringCardProps {
@@ -42,6 +44,9 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
   const [ratings, setRatings] = useState<{ [key: number]: number }>({});
   const [rated, setRated] = useState(false);
   const [guestTags, setGuestTags] = useState<{ [key: number]: string }>({});
+  const [noShowTarget, setNoShowTarget] = useState<number|null>(null);
+  const [noShowDialogOpen, setNoShowDialogOpen] = useState(false);
+  const [noShowMap, setNoShowMap] = useState<{ [key: number]: boolean }>({});
 
   // 평가 완료 시 모든 게스트 평가 여부 확인
   useEffect(() => {
@@ -90,7 +95,7 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
   };
 
   // 참여자 상태 변경 핸들러
-  const handleParticipantStatus = (participantId: number, status: 'approved' | 'rejected') => {
+  const handleParticipantStatus = (participantId: number, status: 'approved' | 'rejected' | 'pending') => {
     const updatedParticipants = gathering.participants.map((p: any) =>
       p.id === participantId ? { ...p, status } : p
     );
@@ -100,6 +105,29 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
   // 별 클릭 핸들러
   const handleStarClick = (id: number, value: number) => {
     setRatings(prev => ({ ...prev, [id]: value }));
+  };
+
+  // 노쇼 처리 핸들러
+  const handleNoShow = (id: number) => {
+    setNoShowTarget(id);
+    setNoShowDialogOpen(true);
+  };
+
+  const confirmNoShow = () => {
+    if (noShowTarget !== null) {
+      setRatings(prev => ({ ...prev, [noShowTarget]: 0 }));
+      setNoShowMap(prev => ({ ...prev, [noShowTarget]: true }));
+      setNoShowDialogOpen(false);
+      setNoShowTarget(null);
+    }
+  };
+
+  const cancelNoShow = (id: number) => {
+    setNoShowMap(prev => ({ ...prev, [id]: false }));
+    setRatings(prev => {
+      const { [id]: _, ...rest } = prev;
+      return rest;
+    });
   };
 
   const handleGuestTagSelect = (participantId: number, tag: string) => {
@@ -146,6 +174,11 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
                   }
                 >
                   {gathering.gender === '무관' ? '성별 무관' : gathering.gender}
+                </Badge>
+              )}
+              {gathering.courtType && (
+                <Badge className={gathering.courtType === '실내' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}>
+                  {gathering.courtType}
                 </Badge>
               )}
             </div>
@@ -205,20 +238,34 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
               <div className="space-y-2">
                 {gathering.participants.map((p: any) => (
                   <div key={p.id} className="flex items-center gap-2">
-                    <span className="text-gray-700">{p.name}</span>
-                    {p.status === 'pending' && (
-                      <>
-                        <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white px-3 py-1" onClick={() => handleParticipantStatus(p.id, 'approved')}>
-                          참여 승인
-                        </Button>
-                        <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white px-3 py-1" onClick={() => handleParticipantStatus(p.id, 'rejected')}>
-                          거부
-                        </Button>
-                        <Badge className="bg-yellow-100 text-yellow-800 ml-2">대기중</Badge>
-                      </>
-                    )}
-                    {p.status === 'approved' && <Badge className="bg-green-100 text-green-800">참여 승인</Badge>}
-                    {p.status === 'rejected' && <Badge className="bg-red-100 text-red-800">거부됨</Badge>}
+                    <span className="text-gray-700 w-20">{p.name}</span>
+                    <span className="text-xs text-gray-500 w-14">{p.position}</span>
+                    <span className="text-xs text-gray-500 w-14">{p.career ?? '-'}</span>
+                    <span className="ml-1 text-sm text-yellow-600 font-semibold w-10">{typeof p.rating === 'number' ? p.rating.toFixed(1) : '-'}</span>
+                    <div className="flex-1" />
+                    <div className="flex items-center gap-1 ml-2">
+                      <Button
+                        size="icon"
+                        className={p.status === 'approved' ? 'p-1 bg-green-500 text-white' : 'p-1 bg-gray-200 text-gray-500'}
+                        onClick={() => handleParticipantStatus(p.id, 'approved')}
+                        variant="default"
+                        disabled={p.status === 'approved'}
+                      >
+                        <span className="text-lg">O</span>
+                      </Button>
+                      <Button
+                        size="icon"
+                        className={p.status === 'rejected' ? 'p-1 bg-red-500 text-white' : 'p-1 bg-gray-200 text-gray-500'}
+                        onClick={() => handleParticipantStatus(p.id, 'rejected')}
+                        variant="default"
+                        disabled={p.status === 'rejected'}
+                      >
+                        <span className="text-lg">X</span>
+                      </Button>
+                      {p.status === 'pending' && <Badge className="bg-yellow-100 text-yellow-800 ml-2">대기중</Badge>}
+                      {p.status === 'approved' && <Badge className="bg-green-100 text-green-800 ml-2">참여 승인</Badge>}
+                      {p.status === 'rejected' && <Badge className="bg-red-100 text-red-800 ml-2">거부됨</Badge>}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -242,23 +289,42 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
                       <span className="text-gray-800 font-medium w-20">{p.name}</span>
                       <Star
                         key={0}
-                        className="w-7 h-7 cursor-pointer text-gray-300"
+                        className={`w-7 h-7 cursor-pointer text-gray-300 ${noShowMap[p.id] ? 'opacity-50 pointer-events-none' : ''}`}
                         fill="none"
                         stroke="#facc15"
-                        onClick={() => handleStarClick(p.id, 0)}
+                        onClick={() => !noShowMap[p.id] && handleStarClick(p.id, 0)}
                         data-testid={`star-${p.id}-0`}
                       />
                       {[1,2,3,4,5].map(i => (
                         <Star
                           key={i}
-                          className={`w-7 h-7 cursor-pointer ${(i <= (ratings[p.id] || 0)) ? 'text-yellow-400' : 'text-gray-300'}`}
+                          className={`w-7 h-7 cursor-pointer ${(i <= (ratings[p.id] || 0)) ? 'text-yellow-400' : 'text-gray-300'} ${noShowMap[p.id] ? 'opacity-50 pointer-events-none' : ''}`}
                           fill={i <= (ratings[p.id] || 0) ? '#facc15' : 'none'}
                           stroke={'#facc15'}
-                          onClick={() => handleStarClick(p.id, i)}
+                          onClick={() => !noShowMap[p.id] && handleStarClick(p.id, i)}
                           data-testid={`star-${p.id}-${i}`}
                         />
                       ))}
                       <span className="ml-2 text-sm text-gray-500">{ratings[p.id] ?? 0}점</span>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="ml-2 px-2 py-1 text-xs"
+                        onClick={() => handleNoShow(p.id)}
+                        disabled={noShowMap[p.id]}
+                      >
+                        노쇼
+                      </Button>
+                      {noShowMap[p.id] && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="ml-2 px-2 py-1 text-xs border-green-500 text-green-700"
+                          onClick={() => cancelNoShow(p.id)}
+                        >
+                          노쇼 취소
+                        </Button>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-700 font-medium">태그:</span>
@@ -350,6 +416,20 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
           참여자 관리
         </Button>
       </div>
+
+      {/* 노쇼 처리 모달 */}
+      <AlertDialog open={noShowDialogOpen} onOpenChange={setNoShowDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>정말로 노쇼 처리 하시겠습니까?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <div className="text-sm text-gray-700 mb-4">노쇼 처리 시 별점이 <span className="font-bold text-red-600">0점</span>으로 고정됩니다.</div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmNoShow}>노쇼 처리</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };

@@ -24,6 +24,7 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
     cost: '',
     description: '',
     level: '',
+    courtType: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -35,6 +36,7 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
       formData.startTime &&
       formData.endTime &&
       (formData.guardCount || formData.forwardCount || formData.centerCount)
+      && formData.courtType
     ) {
       onSubmit(formData);
     }
@@ -160,6 +162,19 @@ const CreateGatheringForm = ({ onSubmit, onCancel }: CreateGatheringFormProps) =
               <SelectItem value="초보 환영">초보 환영</SelectItem>
               <SelectItem value="중수">중수</SelectItem>
               <SelectItem value="고수">고수</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="courtType">코트 타입 *</Label>
+          <Select value={formData.courtType} onValueChange={(value) => handleInputChange('courtType', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="실내/야외 선택" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="실내">실내</SelectItem>
+              <SelectItem value="야외">야외</SelectItem>
             </SelectContent>
           </Select>
         </div>

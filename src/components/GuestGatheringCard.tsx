@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Users, Clock, DollarSign, MessageSquare, Star } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, DollarSign, MessageSquare, Star, Copy } from 'lucide-react';
+import { useState } from 'react';
 
 interface Gathering {
   id: number;
@@ -21,6 +22,7 @@ interface Gathering {
   hostRating: number;
   joinStatus?: 'none' | 'applied' | 'confirmed';
   level?: string;
+  courtType?: '실내' | '야외';
 }
 
 interface GuestGatheringCardProps {
@@ -29,6 +31,16 @@ interface GuestGatheringCardProps {
 }
 
 const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    if (gathering.location) {
+      await navigator.clipboard.writeText(gathering.location);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    }
+  };
+
   const getJoinButton = () => {
     if (gathering.joinStatus === 'applied') {
       return (
@@ -109,6 +121,11 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
                   {gathering.gender === '무관' ? '성별 무관' : gathering.gender}
                 </Badge>
               )}
+              {gathering.courtType && (
+                <Badge className={gathering.courtType === '실내' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'}>
+                  {gathering.courtType}
+                </Badge>
+              )}
             </div>
             <CardTitle className="text-xl text-gray-900 mb-2">
               {gathering.sport} 참여자 모집
@@ -138,6 +155,17 @@ const GuestGatheringCard = ({ gathering, onJoin }: GuestGatheringCardProps) => {
         <div className="flex items-center text-gray-600">
           <MapPin className="w-4 h-4 mr-2 flex-shrink-0" />
           <span className="text-sm">{gathering.location}</span>
+          <button
+            type="button"
+            className="ml-2 p-1 rounded hover:bg-gray-100"
+            onClick={handleCopy}
+            title="주소 복사"
+          >
+            <Copy className="w-4 h-4" />
+          </button>
+          {copied && (
+            <span className="ml-2 text-xs text-green-600">복사됨!</span>
+          )}
         </div>
         
         <div className="flex items-center justify-between">

@@ -33,6 +33,8 @@ interface GatheringType {
   level?: string;
   hostTagGiven?: string;
   createdAt: string;
+  status: string;
+  courtType: string;
 }
 
 const TAG_OPTIONS = [
@@ -57,22 +59,23 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
   const [hostRatings, setHostRatings] = useState<{ [key: number]: number }>({});
   const [hostRated, setHostRated] = useState<{ [key: number]: boolean }>({});
   const [hostTags, setHostTags] = useState<{ [key: number]: string }>({});
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [courtTypeFilter, setCourtTypeFilter] = useState('all');
 
   useEffect(() => {
     if (mockGuestGatherings && mockGuestGatherings.length > 0) {
-      setGatherings(mockGuestGatherings);
-      setFilteredGatherings(mockGuestGatherings);
+      // 모집 상태(status) 필드가 없으면 joinStatus로부터 status를 유추하여 추가
+      const withStatus = mockGuestGatherings.map(g => ({
+        ...g,
+        status: g.status || (g.currentParticipants < (g.guardCount + g.forwardCount + g.centerCount) ? 'recruiting' : 'full')
+      }));
+      setGatherings(withStatus);
+      setFilteredGatherings(withStatus);
     }
   }, []);
 
-  const handleSearch = (customSortBy?: string) => {
+  const handleSearch = () => {
     let filtered = gatherings;
-    if (searchTerm) {
-      filtered = filtered.filter(g => 
-        g.location.includes(searchTerm) ||
-        g.description.includes(searchTerm)
-      );
-    }
     if (locationFilter && locationFilter !== 'all') {
       filtered = filtered.filter(g => g.location.includes(locationFilter));
     }
@@ -95,21 +98,19 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
         return true;
       });
     }
-    const sortKey = customSortBy || sortBy;
-    if (sortKey === 'hostRating') {
+    if (statusFilter && statusFilter !== 'all') {
+      filtered = filtered.filter(g => g.status === statusFilter);
+    }
+    if (courtTypeFilter && courtTypeFilter !== 'all') {
+      filtered = filtered.filter(g => g.courtType === courtTypeFilter);
+    }
+    if (sortBy === 'hostRating') {
       filtered = [...filtered].sort((a, b) => b.hostRating - a.hostRating);
-    } else if (sortKey === 'latest') {
+    } else if (sortBy === 'latest') {
       filtered = [...filtered].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
     setFilteredGatherings(filtered);
   };
-
-  useEffect(() => {
-    if (sortBy !== 'default') {
-      handleSearch(sortBy);
-    }
-    // eslint-disable-next-line
-  }, [sortBy]);
 
   const handleJoinGathering = (id: number) => {
     const updatedGatherings = gatherings.map(g => 
@@ -204,20 +205,12 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
             <CardContent>
               <div className="grid md:grid-cols-4 gap-4">
                 <div>
-                  <Input
-                    placeholder="검색어 입력..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <div>
                   <Select value={locationFilter} onValueChange={setLocationFilter}>
                     <SelectTrigger>
-                      <SelectValue placeholder="지역 선택" />
+                      <SelectValue placeholder="위치" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value="all">위치</SelectItem>
                       <SelectItem value="강남구">강남구</SelectItem>
                       <SelectItem value="성동구">성동구</SelectItem>
                       <SelectItem value="마포구">마포구</SelectItem>
@@ -231,14 +224,14 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
                       <SelectValue placeholder="시작 시간" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
-                      <SelectItem value="09">09시대</SelectItem>
-                      <SelectItem value="10">10시대</SelectItem>
-                      <SelectItem value="14">14시대</SelectItem>
-                      <SelectItem value="15">15시대</SelectItem>
-                      <SelectItem value="18">18시대</SelectItem>
-                      <SelectItem value="19">19시대</SelectItem>
-                      <SelectItem value="20">20시대</SelectItem>
+                      <SelectItem value="all">시간</SelectItem>
+                      <SelectItem value="09">09시</SelectItem>
+                      <SelectItem value="10">10시</SelectItem>
+                      <SelectItem value="14">14시</SelectItem>
+                      <SelectItem value="15">15시</SelectItem>
+                      <SelectItem value="18">18시</SelectItem>
+                      <SelectItem value="19">19시</SelectItem>
+                      <SelectItem value="20">20시</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -248,7 +241,7 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
                       <SelectValue placeholder="포지션" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value="all">포지션</SelectItem>
                       <SelectItem value="guard">가드</SelectItem>
                       <SelectItem value="forward">포워드</SelectItem>
                       <SelectItem value="center">센터</SelectItem>
@@ -261,7 +254,7 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
                       <SelectValue placeholder="모집 성별" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value="all">성별</SelectItem>
                       <SelectItem value="무관">성별 무관</SelectItem>
                       <SelectItem value="남">남</SelectItem>
                       <SelectItem value="여">여</SelectItem>
@@ -269,8 +262,32 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
                   </Select>
                 </div>
                 <div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="모집 상태" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">모집 상태</SelectItem>
+                      <SelectItem value="recruiting">모집중</SelectItem>
+                      <SelectItem value="full">모집완료</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Select value={courtTypeFilter} onValueChange={setCourtTypeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="코트 타입" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">코트 타입</SelectItem>
+                      <SelectItem value="실내">실내</SelectItem>
+                      <SelectItem value="야외">야외</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <Button 
-                    onClick={() => handleSearch()} 
+                    onClick={handleSearch}
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
                   >
                     <Search className="w-4 h-4 mr-2" />

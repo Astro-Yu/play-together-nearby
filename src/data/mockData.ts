@@ -17,11 +17,12 @@ export const mockHostGatherings = [
     level: '초보 환영',
     status: 'recruiting' as const,
     participants: [
-      { id: 1, name: '김철수', status: 'pending' },
-      { id: 2, name: '이영희', status: 'approved' },
-      { id: 3, name: '박민수', status: 'rejected' },
+      { id: 1, name: '김철수', status: 'pending', position: '가드', rating: 4, career: '1년' },
+      { id: 2, name: '이영희', status: 'approved', position: '포워드', rating: 5, career: '3년' },
+      { id: 3, name: '박민수', status: 'rejected', position: '센터', rating: 3, career: '6개월' },
     ],
     createdAt: '2025-07-01T10:00:00Z',
+    courtType: '실내',
   },
   {
     id: 2,
@@ -41,6 +42,7 @@ export const mockHostGatherings = [
     status: 'full' as const,
     participants: [],
     createdAt: '2025-07-01T09:00:00Z',
+    courtType: '야외',
   },
   {
     id: 3,
@@ -59,12 +61,13 @@ export const mockHostGatherings = [
     level: '중수',
     status: 'full' as const,
     participants: [
-      { id: 11, name: '최지훈', status: 'approved' },
-      { id: 12, name: '김하늘', status: 'approved' },
-      { id: 13, name: '이수빈', status: 'pending' },
-      { id: 14, name: '박서준', status: 'rejected' },
+      { id: 11, name: '최지훈', status: 'approved', position: '가드', rating: 5, career: '2년' },
+      { id: 12, name: '김하늘', status: 'approved', position: '포워드', rating: 4, career: '1년' },
+      { id: 13, name: '이수빈', status: 'pending', position: '센터', rating: 0, career: '신입' },
+      { id: 14, name: '박서준', status: 'rejected', position: '가드', rating: 2, career: '4년' },
     ],
     createdAt: '2025-07-05T15:00:00Z',
+    courtType: '실내',
   },
 ];
 
@@ -89,6 +92,8 @@ export const mockGuestGatherings = [
     hostRating: 4.8,
     joinStatus: 'none' as const,
     createdAt: '2025-07-01T10:00:00Z',
+    courtType: '실내',
+    status: 'recruiting',
   },
   {
     id: 102,
@@ -109,6 +114,8 @@ export const mockGuestGatherings = [
     hostRating: 4.6,
     joinStatus: 'none' as const,
     createdAt: '2025-07-02T09:00:00Z',
+    courtType: '야외',
+    status: 'recruiting',
   },
   {
     id: 103,
@@ -129,6 +136,8 @@ export const mockGuestGatherings = [
     hostRating: 4.9,
     joinStatus: 'none' as const,
     createdAt: '2025-07-03T12:00:00Z',
+    courtType: '실내',
+    status: 'recruiting',
   },
   {
     id: 104,
@@ -149,6 +158,8 @@ export const mockGuestGatherings = [
     hostRating: 4.7,
     joinStatus: 'none' as const,
     createdAt: '2025-07-04T15:00:00Z',
+    courtType: '야외',
+    status: 'full',
   },
   {
     id: 105,
@@ -169,6 +180,8 @@ export const mockGuestGatherings = [
     hostRating: 4.5,
     joinStatus: 'none' as const,
     createdAt: '2025-07-05T18:00:00Z',
+    courtType: '실내',
+    status: 'recruiting',
   },
   {
     id: 106,
@@ -189,6 +202,8 @@ export const mockGuestGatherings = [
     hostRating: 4.9,
     joinStatus: 'confirmed' as const,
     createdAt: '2025-07-06T20:00:00Z',
+    courtType: '야외',
+    status: 'full',
   },
   {
     id: 107,
@@ -209,6 +224,8 @@ export const mockGuestGatherings = [
     hostRating: 4.2,
     joinStatus: 'none' as const,
     createdAt: '2025-07-07T08:00:00Z',
+    courtType: '실내',
+    status: 'recruiting',
   },
   {
     id: 108,
@@ -229,5 +246,7 @@ export const mockGuestGatherings = [
     hostRating: 4.0,
     joinStatus: 'applied' as const,
     createdAt: '2025-07-08T10:00:00Z',
+    courtType: '야외',
+    status: 'full',
   },
 ];
