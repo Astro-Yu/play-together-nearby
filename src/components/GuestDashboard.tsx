@@ -39,7 +39,12 @@ const TAG_OPTIONS = [
   '#친절', '#매너 좋음', '#고수', '#과격함', '#소통', '#시간 엄수', '#무단 결석', '#추천하고 싶음', '#또 하고 싶음'
 ];
 
-const GuestDashboard = () => {
+interface GuestDashboardProps {
+  userName: string;
+  onRoleReset: () => void;
+}
+
+const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
   const [gatherings, setGatherings] = useState<GatheringType[]>([]);
   const [filteredGatherings, setFilteredGatherings] = useState<GatheringType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');

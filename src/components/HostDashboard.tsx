@@ -6,7 +6,12 @@ import CreateGatheringForm from '@/components/CreateGatheringForm';
 import HostGatheringCard from '@/components/HostGatheringCard';
 import { mockHostGatherings } from '@/data/mockData';
 
-const HostDashboard = () => {
+interface HostDashboardProps {
+  userName: string;
+  onRoleReset: () => void;
+}
+
+const HostDashboard = ({ userName, onRoleReset }: HostDashboardProps) => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [gatherings, setGatherings] = useState(mockHostGatherings);
 

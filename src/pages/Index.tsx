@@ -7,6 +7,9 @@ import HostDashboard from '@/components/HostDashboard';
 import GuestDashboard from '@/components/GuestDashboard';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import UserProfileModal from '@/components/UserProfileModal';
+import { useUserProfileContext } from '@/App';
+import Header from '@/components/Header';
 
 export type UserRole = 'host' | 'guest' | null;
 
@@ -15,6 +18,8 @@ const Index = () => {
   const [userName, setUserName] = useState<string>('');
   const [loginName, setLoginName] = useState<string>('');
   const [loginOpen, setLoginOpen] = useState<boolean>(true);
+  
+  const { userProfile, setUserProfile, isProfileModalOpen, setIsProfileModalOpen } = useUserProfileContext();
 
   const handleRoleSelect = (role: UserRole) => {
     setUserRole(role);
@@ -27,7 +32,17 @@ const Index = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (loginName.trim()) {
-      setUserName(loginName.trim());
+      const userName = loginName.trim();
+      setUserName(userName);
+      
+      // 사용자 프로필 정보 생성
+      const mockProfile = {
+        name: userName,
+        experience: Math.floor(Math.random() * 10) + 1, // 1-10년 랜덤
+        preferredPosition: ['가드', '포워드', '센터', '무관'][Math.floor(Math.random() * 4)],
+        location: ['서울 강남구', '서울 송파구', '서울 마포구', '서울 성동구'][Math.floor(Math.random() * 4)],
+      };
+      setUserProfile(mockProfile);
       setLoginOpen(false);
     }
   };
@@ -56,31 +71,20 @@ const Index = () => {
         </DialogContent>
       </Dialog>
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-blue-500 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-gray-900">농구 게더</h1>
-            </div>
-            {userRole && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRoleReset}
-                className="text-sm"
-              >
-                역할 변경
-              </Button>
-            )}
-            {userName && (
-              <span className="ml-4 text-gray-700 font-medium">{userName}님</span>
-            )}
-          </div>
-        </div>
-      </header>
+      <Header 
+        userName={userName} 
+        userRole={userRole} 
+        onRoleReset={handleRoleReset} 
+      />
+      {/* User Profile Modal */}
+      {userProfile && (
+        <UserProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          userProfile={userProfile}
+        />
+      )}
+      
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8">
         {!userName ? null :
@@ -134,9 +138,9 @@ const Index = () => {
               <RoleSelection onRoleSelect={handleRoleSelect} />
             </>
           ) : userRole === 'host' ? (
-            <HostDashboard />
+            <HostDashboard userName={userName} onRoleReset={handleRoleReset} />
           ) : (
-            <GuestDashboard />
+            <GuestDashboard userName={userName} onRoleReset={handleRoleReset} />
           ))}
       </main>
     </div>
