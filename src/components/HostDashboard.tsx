@@ -5,6 +5,13 @@ import { Plus } from 'lucide-react';
 import CreateGatheringForm from '@/components/CreateGatheringForm';
 import HostGatheringCard from '@/components/HostGatheringCard';
 import { mockHostGatherings } from '@/data/mockData';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 
 interface HostDashboardProps {
   userName: string;
@@ -12,8 +19,8 @@ interface HostDashboardProps {
 }
 
 const HostDashboard = ({ userName, onRoleReset }: HostDashboardProps) => {
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [gatherings, setGatherings] = useState(mockHostGatherings);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleCreateGathering = (gatheringData: any) => {
     const newGathering = {
@@ -21,11 +28,11 @@ const HostDashboard = ({ userName, onRoleReset }: HostDashboardProps) => {
       ...gatheringData,
       status: 'recruiting' as const,
       currentParticipants: 0,
-      participants: [],
+      participants: [] as { id: number; name: string; status: 'pending' | 'approved' | 'rejected'; position: string; rating: number; career: string }[],
       createdAt: new Date().toISOString(),
     };
     setGatherings([newGathering, ...gatherings]);
-    setShowCreateForm(false);
+    setDialogOpen(false);
   };
 
   const handleUpdateGathering = (id: number, updates: any) => {
@@ -41,31 +48,26 @@ const HostDashboard = ({ userName, onRoleReset }: HostDashboardProps) => {
           <h2 className="text-3xl font-bold text-gray-900">호스트 대시보드</h2>
           <p className="text-gray-600 mt-2">모집 글을 작성하고 참여자를 관리하세요</p>
         </div>
-        {!showCreateForm && (
-          <Button
-            onClick={() => setShowCreateForm(true)}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            모집 글 작성
-          </Button>
-        )}
-      </div>
-
-      {showCreateForm && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>새 모집 글 작성</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              모집 글 작성
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>새 모집 글 작성</DialogTitle>
+            </DialogHeader>
             <CreateGatheringForm
               onSubmit={handleCreateGathering}
-              onCancel={() => setShowCreateForm(false)}
+              onCancel={() => setDialogOpen(false)}
             />
-          </CardContent>
-        </Card>
-      )}
-
+          </DialogContent>
+        </Dialog>
+      </div>
       <div className="space-y-4">
         {gatherings.length === 0 ? (
           <Card className="text-center py-12">
@@ -79,12 +81,24 @@ const HostDashboard = ({ userName, onRoleReset }: HostDashboardProps) => {
               <p className="text-gray-600 mb-6">
                 함께 농구할 사람들을 모집해보세요
               </p>
-              <Button
-                onClick={() => setShowCreateForm(true)}
-                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
-              >
-                모집 글 작성하기
-              </Button>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+                  >
+                    모집 글 작성하기
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>새 모집 글 작성</DialogTitle>
+                  </DialogHeader>
+                  <CreateGatheringForm
+                    onSubmit={handleCreateGathering}
+                    onCancel={() => setDialogOpen(false)}
+                  />
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         ) : (

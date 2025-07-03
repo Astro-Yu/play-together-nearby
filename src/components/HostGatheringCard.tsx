@@ -47,6 +47,9 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
   const [noShowTarget, setNoShowTarget] = useState<number|null>(null);
   const [noShowDialogOpen, setNoShowDialogOpen] = useState(false);
   const [noShowMap, setNoShowMap] = useState<{ [key: number]: boolean }>({});
+  const [chatOpenId, setChatOpenId] = useState<number|null>(null);
+  const [chatMessages, setChatMessages] = useState<{ [guestId: number]: { sender: 'host' | 'guest'; text: string }[] }>({});
+  const [chatInput, setChatInput] = useState<{ [guestId: number]: string }>({});
 
   // 평가 완료 시 모든 게스트 평가 여부 확인
   useEffect(() => {
@@ -140,6 +143,16 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
     setRateOpen(false);
   };
 
+  const handleSendMessage = (guestId: number, sender: 'host' | 'guest') => {
+    const text = chatInput[guestId]?.trim();
+    if (!text) return;
+    setChatMessages(prev => ({
+      ...prev,
+      [guestId]: [...(prev[guestId] || []), { sender, text }]
+    }));
+    setChatInput(prev => ({ ...prev, [guestId]: '' }));
+  };
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-4">
@@ -230,7 +243,7 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
 
         {/* 참여자 관리 모달 */}
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent>
+          <DialogContent className="w-full max-w-3xl">
             <DialogHeader>
               <DialogTitle>참여자 관리</DialogTitle>
             </DialogHeader>
@@ -243,6 +256,51 @@ const HostGatheringCard = ({ gathering, onUpdate }: HostGatheringCardProps) => {
                     <span className="text-xs text-gray-500 w-14">{p.career ?? '-'}</span>
                     <span className="ml-1 text-sm text-yellow-600 font-semibold w-10">{typeof p.rating === 'number' ? p.rating.toFixed(1) : '-'}</span>
                     <div className="flex-1" />
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="p-1 mr-2 border-blue-300 text-blue-700"
+                      onClick={() => setChatOpenId(p.id)}
+                      title="채팅하기"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                    </Button>
+                    <Dialog open={chatOpenId === p.id} onOpenChange={open => setChatOpenId(open ? p.id : null)}>
+                      <DialogContent className="w-full max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>{p.name}님과 채팅</DialogTitle>
+                        </DialogHeader>
+                        <div className="flex flex-col gap-2 max-h-60 overflow-y-auto border rounded p-2 bg-gray-50 mb-2">
+                          {(chatMessages[p.id] || []).length === 0 && (
+                            <div className="text-gray-400 text-sm text-center py-4">아직 메시지가 없습니다.</div>
+                          )}
+                          {(chatMessages[p.id] || []).map((msg, idx) => (
+                            <div key={idx} className={`flex ${msg.sender === 'host' ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`px-3 py-1 rounded-lg text-sm ${msg.sender === 'host' ? 'bg-blue-200 text-blue-900' : 'bg-gray-200 text-gray-800'}`}>
+                                {msg.text}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <input
+                            className="flex-1 border rounded px-2 py-1 text-sm"
+                            placeholder="메시지 입력..."
+                            value={chatInput[p.id] || ''}
+                            onChange={e => setChatInput(prev => ({ ...prev, [p.id]: e.target.value }))}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') handleSendMessage(p.id, 'host');
+                            }}
+                          />
+                          <Button
+                            className="bg-blue-500 text-white px-4"
+                            onClick={() => handleSendMessage(p.id, 'host')}
+                          >
+                            전송
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                     <div className="flex items-center gap-1 ml-2">
                       <Button
                         size="icon"

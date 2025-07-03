@@ -11,6 +11,7 @@ import { Star } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, MapPin, DollarSign, MessageSquare } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface GatheringType {
   id: number;
@@ -61,6 +62,9 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
   const [hostTags, setHostTags] = useState<{ [key: number]: string }>({});
   const [statusFilter, setStatusFilter] = useState('all');
   const [courtTypeFilter, setCourtTypeFilter] = useState('all');
+  const [chatOpenId, setChatOpenId] = useState<number|null>(null);
+  const [chatMessages, setChatMessages] = useState<{ [gatheringId: number]: { sender: 'guest' | 'host'; text: string }[] }>({});
+  const [chatInput, setChatInput] = useState<{ [gatheringId: number]: string }>({});
 
   useEffect(() => {
     if (mockGuestGatherings && mockGuestGatherings.length > 0) {
@@ -164,6 +168,16 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
     setFilteredGatherings(prev => prev.map(g =>
       g.id === id ? { ...g, joinStatus: 'none' as const } : g
     ));
+  };
+
+  const handleSendMessage = (gatheringId: number, sender: 'guest' | 'host') => {
+    const text = chatInput[gatheringId]?.trim();
+    if (!text) return;
+    setChatMessages(prev => ({
+      ...prev,
+      [gatheringId]: [...(prev[gatheringId] || []), { sender, text }]
+    }));
+    setChatInput(prev => ({ ...prev, [gatheringId]: '' }));
   };
 
   return (
@@ -443,6 +457,48 @@ const GuestDashboard = ({ userName, onRoleReset }: GuestDashboardProps) => {
                       >
                         신청 취소
                       </Button>
+                      <Button
+                        className="flex-1 bg-blue-100 text-blue-700 border border-blue-300"
+                        onClick={() => setChatOpenId(gathering.id)}
+                      >
+                        채팅하기
+                      </Button>
+                      <Dialog open={chatOpenId === gathering.id} onOpenChange={open => setChatOpenId(open ? gathering.id : null)}>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>호스트와 채팅</DialogTitle>
+                          </DialogHeader>
+                          <div className="flex flex-col gap-2 max-h-60 overflow-y-auto border rounded p-2 bg-gray-50 mb-2">
+                            {(chatMessages[gathering.id] || []).length === 0 && (
+                              <div className="text-gray-400 text-sm text-center py-4">아직 메시지가 없습니다.</div>
+                            )}
+                            {(chatMessages[gathering.id] || []).map((msg, idx) => (
+                              <div key={idx} className={`flex ${msg.sender === 'guest' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`px-3 py-1 rounded-lg text-sm ${msg.sender === 'guest' ? 'bg-blue-200 text-blue-900' : 'bg-gray-200 text-gray-800'}`}>
+                                  {msg.text}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="flex gap-2">
+                            <input
+                              className="flex-1 border rounded px-2 py-1 text-sm"
+                              placeholder="메시지 입력..."
+                              value={chatInput[gathering.id] || ''}
+                              onChange={e => setChatInput(prev => ({ ...prev, [gathering.id]: e.target.value }))}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') handleSendMessage(gathering.id, 'guest');
+                              }}
+                            />
+                            <Button
+                              className="bg-blue-500 text-white px-4"
+                              onClick={() => handleSendMessage(gathering.id, 'guest')}
+                            >
+                              전송
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </CardContent>
                 </Card>
